@@ -3,10 +3,12 @@
 ##
 ## Iptables Script
 ##
-##  Type: Webserver
-##  Distro: Ubuntu 10.04
-##  Provider: Linode
-##  IP Version: ip4
+## This script must be run as root!
+##
+##   Type: Webserver
+##   Distro: Ubuntu 10.04
+##   Provider: Linode
+##   IP Version: ip4
 ##
 ## Author: Brendon Crawford
 ## Warning: Do not blindly run this script. Make sure you first understand what
@@ -18,7 +20,7 @@ ADDRESS_PUB=$(ifconfig eth0 | \
               awk -F: '/inet addr:/ {print $2}' | \
               awk '{ print $1 }')
 
-FILE_STARTUP="/etc/networking/if-pre-up.d/iptablesload"
+FILE_STARTUP="/etc/network/if-pre-up.d/iptablesload"
 FILE_RULES_IN="/etc/iptables.rules"
 
 ## Flush rules
@@ -51,7 +53,7 @@ iptables -A INPUT -i eth0 -d ${ADDRESS_PUB} -m tcp -p tcp \
 iptables-save -c > ${FILE_RULES_IN}
 
 ## Add to Startup
-if [ !-x "${FILE_STARTUP}" ]; then
+if [ ! -x "${FILE_STARTUP}" ]; then
 cat <<EOF > ${FILE_STARTUP}
 #!/bin/bash
 if [ -r "${FILE_RULES_IN}" ]; then
@@ -63,5 +65,6 @@ chmod +x ${FILE_STARTUP}
 fi;
 
 ## Exit
+echo "Done."
 exit 0
 
